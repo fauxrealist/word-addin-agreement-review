@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>Agreement Review Assistant</title>
+    
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            padding: 15px;
+            max-width: 100%;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 15px;
+            margin: -15px -15px 20px -15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 5px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .tab:hover:not(.active) {
+            background: #f0f0f0;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .playbook-section {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .playbook-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .playbook-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        
+        .clause-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .clause-item:hover {
+            background: #e9ecef;
+            border-left-color: #667eea;
+            transform: translateX(3px);
+        }
+        
+        .clause-title {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+        
+        .clause-preview {
+            color: #6c757d;
+            font-size: 12px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .comparison-result {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .match-indicator {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        .match-high {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .match-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .match-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .diff-display {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .added {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        
+        .removed {
+            background: #f8d7da;
+            padding: 2px 4px;
+            border-radius: 2px;
+            text-decoration: line-through;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+        
+        .settings-group {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .settings-label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .settings-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .settings-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea.settings-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 Agreement Review Assistant</h1>
+        <div class="subtitle">Compare clauses against your playbook</div>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('playbook')">📚 Playbook</button>
+            <button class="tab" onclick="switchTab('compare')">🔍 Compare</button>
+            <button class="tab" onclick="switchTab('settings')">⚙️ Settings</button>
+        </div>
+        
+        <!-- Playbook Tab -->
+        <div id="playbook-tab" class="tab-content active">
+            <input type="text" class="search-box" placeholder="Search clauses..." oninput="searchClauses(this.value)">
+            
+            <div id="playbook-content">
+                <!-- Playbook sections will be loaded here -->
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="addNewClause()">
+                    <span>➕</span> Add Clause
+                </button>
+                <button class="btn btn-secondary" onclick="importPlaybook()">
+                    <span>📥</span> Import
+                </button>
+            </div>
+        </div>
+        
+        <!-- Compare Tab -->
+        <div id="compare-tab" class="tab-content">
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="analyzeDocument()">
+                    <span>🔍</span> Analyze Current Document
+                </button>
+                <button class="btn btn-secondary" onclick="compareSelection()">
+                    <span>📝</span> Compare Selected Text
+                </button>
+            </div>
+            
+            <div id="comparison-results" style="margin-top: 20px;">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📄</div>
+                    <p>Select text or analyze the document to see comparisons</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <div class="settings-group">
+                <label class="settings-label">Similarity Threshold (%)</label>
+                <input type="number" class="settings-input" id="similarity-threshold" value="80" min="50" max="100">
+            </div>
+            
+            <div class="settings-group">
+                <label class="settings-label">Default Playbook</label>
+                <select class="settings-input" id="default-playbook">
+                    <option value="general">General Commercial</option>
+                    <option value="nda">Non-Disclosure Agreement</option>
+                    <option value="employment">Employment Agreement</option>
+                    <option value="saas">SaaS Agreement</option>
+                </select>
+            </div>
+            
+            <div class="settings-group">
+                <label class="settings-label">Custom Clause Categories</label>
+                <textarea class="settings-input" id="custom-categories" placeholder="Enter categories, one per line..."></textarea>
+            </div>
+            
+            <button class="btn btn-primary" onclick="saveSettings()">
+                <span>💾</span> Save Settings
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Office.js
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Word) {
+                initializeAddIn();
+            }
+        });
+        
+        // Sample playbook data structure
+        let playbook = {
+            "general": {
+                "title": "General Commercial",
+                "clauses": [
+                    {
+                        "id": "gc-1",
+                        "title": "Limitation of Liability",
+                        "content": "Neither party shall be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or use, incurred by either party or any third party, whether in an action in contract or tort, even if the party has been advised of the possibility of such damages.",
+                        "category": "Risk Allocation"
+                    },
+                    {
+                        "id": "gc-2",
+                        "title": "Indemnification",
+                        "content": "Each party shall defend, indemnify, and hold harmless the other party and its officers, directors, employees, and agents from and against any and all claims, damages, losses, and expenses, including reasonable attorneys' fees, arising out of or resulting from any breach of this Agreement by the indemnifying party.",
+                        "category": "Risk Allocation"
+                    },
+                    {
+                        "id": "gc-3",
+                        "title": "Governing Law",
+                        "content": "This Agreement shall be governed by and construed in accordance with the laws of [State/Country], without regard to its conflict of law provisions.",
+                        "category": "General Provisions"
+                    }
+                ]
+            },
+            "nda": {
+                "title": "Non-Disclosure Agreement",
+                "clauses": [
+                    {
+                        "id": "nda-1",
+                        "title": "Definition of Confidential Information",
+                        "content": "\"Confidential Information\" means all information disclosed by one party to the other party, whether orally, in writing, or in any other form, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information and the circumstances of disclosure.",
+                        "category": "Definitions"
+                    },
+                    {
+                        "id": "nda-2",
+                        "title": "Non-Use and Non-Disclosure",
+                        "content": "The receiving party shall not use the disclosing party's Confidential Information for any purpose except to evaluate and engage in discussions concerning a potential business relationship between the parties. The receiving party shall not disclose the disclosing party's Confidential Information to any third parties.",
+                        "category": "Obligations"
+                    }
+                ]
+            }
+        };
+        
+        // Initialize the add-in
+        function initializeAddIn() {
+            loadPlaybook();
+            loadSettings();
+        }
+        
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+        
+        // Load playbook
+        function loadPlaybook() {
+            const playbookContent = document.getElementById('playbook-content');
+            const selectedPlaybook = localStorage.getItem('defaultPlaybook') || 'general';
+            const currentPlaybook = playbook[selectedPlaybook];
+            
+            if (!currentPlaybook) {
+                playbookContent.innerHTML = '<div class="empty-state"><p>No playbook loaded</p></div>';
+                return;
+            }
+            
+            // Group clauses by category
+            const categories = {};
+            currentPlaybook.clauses.forEach(clause => {
+                if (!categories[clause.category]) {
+                    categories[clause.category] = [];
+                }
+                categories[clause.category].push(clause);
+            });
+            
+            // Render categories and clauses
+            playbookContent.innerHTML = '';
+            Object.keys(categories).forEach(category => {
+                const section = document.createElement('div');
+                section.className = 'playbook-section';
+                
+                const title = document.createElement('div');
+                title.className = 'playbook-title';
+                title.textContent = category;
+                section.appendChild(title);
+                
+                categories[category].forEach(clause => {
+                    const clauseItem = document.createElement('div');
+                    clauseItem.className = 'clause-item';
+                    clauseItem.onclick = () => insertClause(clause);
+                    
+                    const clauseTitle = document.createElement('div');
+                    clauseTitle.className = 'clause-title';
+                    clauseTitle.textContent = clause.title;
+                    
+                    const clausePreview = document.createElement('div');
+                    clausePreview.className = 'clause-preview';
+                    clausePreview.textContent = clause.content;
+                    
+                    clauseItem.appendChild(clauseTitle);
+                    clauseItem.appendChild(clausePreview);
+                    section.appendChild(clauseItem);
+                });
+                
+                playbookContent.appendChild(section);
+            });
+        }
+        
+        // Insert clause into document
+        async function insertClause(clause) {
+            try {
+                await Word.run(async (context) => {
+                    const range = context.document.getSelection();
+                    range.insertText(clause.content, Word.InsertLocation.replace);
+                    await context.sync();
+                    
+                    showNotification('Clause inserted successfully', 'success');
+                });
+            } catch (error) {
+                showNotification('Error inserting clause: ' + error.message, 'error');
+            }
+        }
+        
+        // Search clauses
+        function searchClauses(query) {
+            const allClauses = document.querySelectorAll('.clause-item');
+            const searchTerm = query.toLowerCase();
+            
+            allClauses.forEach(clause => {
+                const title = clause.querySelector('.clause-title').textContent.toLowerCase();
+                const content = clause.querySelector('.clause-preview').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || content.includes(searchTerm)) {
+                    clause.style.display = 'block';
+                } else {
+                    clause.style.display = 'none';
+                }
+            });
+        }
+        
+        // Analyze document
+        async function analyzeDocument() {
+            const resultsDiv = document.getElementById('comparison-results');
+            resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Analyzing document...</div>';
+            
+            try {
+                await Word.run(async (context) => {
+                    const paragraphs = context.document.body.paragraphs;
+                    paragraphs.load('text');
+                    await context.sync();
+                    
+                    const results = [];
+                    const threshold = parseInt(document.getElementById('similarity-threshold')?.value || 80);
+                    
+                    // Compare each paragraph with playbook clauses
+                    for (let i = 0; i < paragraphs.items.length; i++) {
+                        const paragraphText = paragraphs.items[i].text.trim();
+                        if (paragraphText.length < 50) continue; // Skip short paragraphs
+                        
+                        const matches = findBestMatches(paragraphText);
+                        if (matches.length > 0 && matches[0].similarity >= threshold) {
+                            results.push({
+                                documentText: paragraphText,
+                                match: matches[0],
+                                paragraphIndex: i
+                            });
+                        }
+                    }
+                    
+                    displayComparisonResults(results);
+                });
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="empty-state"><p>Error: ${error.message}</p></div>`;
+            }
+        }
+        
+        // Compare selected text
+        async function compareSelection() {
+            const resultsDiv = document.getElementById('comparison-results');
+            resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Comparing selection...</div>';
+            
+            try {
+                await Word.run(async (context) => {
+                    const range = context.document.getSelection();
+                    range.load('text');
+                    await context.sync();
+                    
+                    const selectedText = range.text.trim();
+                    if (!selectedText) {
+                        resultsDiv.innerHTML = '<div class="empty-state"><p>Please select some text first</p></div>';
+                        return;
+                    }
+                    
+                    const matches = findBestMatches(selectedText);
+                    displayComparisonResults([{
+                        documentText: selectedText,
+                        match: matches[0] || { similarity: 0 },
+                        isSelection: true
+                    }]);
+                });
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="empty-state"><p>Error: ${error.message}</p></div>`;
+            }
+        }
+        
+        // Find best matching clauses
+        function findBestMatches(text) {
+            const matches = [];
+            const selectedPlaybook = localStorage.getItem('defaultPlaybook') || 'general';
+            const currentPlaybook = playbook[selectedPlaybook];
+            
+            if (!currentPlaybook) return matches;
+            
+            currentPlaybook.clauses.forEach(clause => {
+                const similarity = calculateSimilarity(text, clause.content);
+                matches.push({
+                    clause: clause,
+                    similarity: similarity
+                });
+            });
+            
+            return matches.sort((a, b) => b.similarity - a.similarity);
+        }
+        
+        // Simple similarity calculation (Jaccard similarity)
+        function calculateSimilarity(text1, text2) {
+            const words1 = new Set(text1.toLowerCase().split(/\s+/));
+            const words2 = new Set(text2.toLowerCase().split(/\s+/));
+            
+            const intersection = new Set([...words1].filter(x => words2.has(x)));
+            const union = new Set([...words1, ...words2]);
+            
+            return Math.round((intersection.size / union.size) * 100);
+        }
+        
+        // Display comparison results
+        function displayComparisonResults(results) {
+            const resultsDiv = document.getElementById('comparison-results');
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div class="empty-state"><p>No matching clauses found</p></div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = '';
+            results.forEach(result => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'comparison-result';
+                
+                // Match indicator
+                const matchIndicator = document.createElement('span');
+                matchIndicator.className = 'match-indicator';
+                if (result.match.similarity >= 90) {
+                    matchIndicator.className += ' match-high';
+                    matchIndicator.textContent = `${result.match.similarity}% Match`;
+                } else if (result.match.similarity >= 70) {
+                    matchIndicator.className += ' match-medium';
+                    matchIndicator.textContent = `${result.match.similarity}% Match`;
+                } else {
+                    matchIndicator.className += ' match-low';
+                    matchIndicator.textContent = `${result.match.similarity}% Match`;
+                }
+                
+                // Document text
+                const docText = document.createElement('div');
+                docText.innerHTML = `<strong>Document Text:</strong><div class="diff-display">${result.documentText}</div>`;
+                
+                // Playbook match
+                if (result.match.clause) {
+                    const playbookText = document.createElement('div');
+                    playbookText.innerHTML = `<strong>Best Match: ${result.match.clause.title}</strong><div class="diff-display">${result.match.clause.content}</div>`;
+                    resultDiv.appendChild(matchIndicator);
+                    resultDiv.appendChild(docText);
+                    resultDiv.appendChild(playbookText);
+                } else {
+                    resultDiv.appendChild(docText);
+                }
+                
+                resultsDiv.appendChild(resultDiv);
+            });
+        }
+        
+        // Add new clause
+        function addNewClause() {
+            const title = prompt('Enter clause title:');
+            if (!title) return;
+            
+            const content = prompt('Enter clause content:');
+            if (!content) return;
+            
+            const category = prompt('Enter category:', 'General Provisions');
+            if (!category) return;
+            
+            const selectedPlaybook = localStorage.getItem('defaultPlaybook') || 'general';
+            const newClause = {
+                id: `custom-${Date.now()}`,
+                title: title,
+                content: content,
+                category: category
+            };
+            
+            if (!playbook[selectedPlaybook]) {
+                playbook[selectedPlaybook] = { title: selectedPlaybook, clauses: [] };
+            }
+            
+            playbook[selectedPlaybook].clauses.push(newClause);
+            savePlaybookToStorage();
+            loadPlaybook();
+            showNotification('Clause added successfully', 'success');
+        }
+        
+        // Import playbook
+        function importPlaybook() {
+            alert('Import functionality: You can paste JSON formatted playbook data or connect to your document management system.');
+        }
+        
+        // Save settings
+        function saveSettings() {
+            const threshold = document.getElementById('similarity-threshold').value;
+            const defaultPlaybook = document.getElementById('default-playbook').value;
+            const customCategories = document.getElementById('custom-categories').value;
+            
+            localStorage.setItem('similarityThreshold', threshold);
+            localStorage.setItem('defaultPlaybook', defaultPlaybook);
+            localStorage.setItem('customCategories', customCategories);
+            
+            loadPlaybook();
+            showNotification('Settings saved successfully', 'success');
+        }
+        
+        // Load settings
+        function loadSettings() {
+            const threshold = localStorage.getItem('similarityThreshold');
+            const defaultPlaybook = localStorage.getItem('defaultPlaybook');
+            const customCategories = localStorage.getItem('customCategories');
+            
+            if (threshold) document.getElementById('similarity-threshold').value = threshold;
+            if (defaultPlaybook) document.getElementById('default-playbook').value = defaultPlaybook;
+            if (customCategories) document.getElementById('custom-categories').value = customCategories;
+        }
+        
+        // Save playbook to storage
+        function savePlaybookToStorage() {
+            localStorage.setItem('playbook', JSON.stringify(playbook));
+        }
+        
+        // Load playbook from storage
+        function loadPlaybookFromStorage() {
+            const stored = localStorage.getItem('playbook');
+            if (stored) {
+                try {
+                    playbook = JSON.parse(stored);
+                } catch (e) {
+                    console.error('Error loading playbook from storage:', e);
+                }
+            }
+        }
+        
+        // Show notification
+        function showNotification(message, type) {
+            // Simple notification - you can enhance this with a toast library
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Load stored playbook on init
+        loadPlaybookFromStorage();
+    </script>
+</body>
+</html>
