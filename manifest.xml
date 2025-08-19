@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
+           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
+           xsi:type="TaskPaneApp">
+  
+  <!-- Basic Information -->
+  <Id>a1b2c3d4-e5f6-7890-abcd-ef1234567890</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Your Company Name</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  
+  <!-- Add-in Display Information -->
+  <DisplayName DefaultValue="Agreement Review Assistant"/>
+  <Description DefaultValue="Review and compare agreement clauses against your standard playbook"/>
+  <IconUrl DefaultValue="https://your-domain.com/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://your-domain.com/icon-64.png"/>
+  <SupportUrl DefaultValue="https://your-domain.com/support"/>
+  
+  <!-- Domains that will be allowed when navigating -->
+  <AppDomains>
+    <AppDomain>https://your-domain.com</AppDomain>
+  </AppDomains>
+  
+  <!-- Required Office Hosts -->
+  <Hosts>
+    <Host Name="Document"/>
+  </Hosts>
+  
+  <!-- Required API Sets -->
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <Set Name="WordApi" MinVersion="1.3"/>
+    </Sets>
+  </Requirements>
+  
+  <!-- Default Settings -->
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://your-domain.com/agreement-review.html"/>
+  </DefaultSettings>
+  
+  <!-- Permissions needed by the add-in -->
+  <Permissions>ReadWriteDocument</Permissions>
+  
+  <!-- Version Overrides for enhanced functionality -->
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    
+    <!-- Hosts -->
+    <Hosts>
+      <Host xsi:type="Document">
+        
+        <!-- Desktop Form Factor -->
+        <DesktopFormFactor>
+          <!-- Function file for commands -->
+          <FunctionFile resid="Commands.Url"/>
+          
+          <!-- Ribbon Extension Points -->
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <!-- Custom Group in Home Tab -->
+              <Group id="AgreementReview.Group">
+                <Label resid="Group.Label"/>
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16x16"/>
+                  <bt:Image size="32" resid="Icon.32x32"/>
+                  <bt:Image size="80" resid="Icon.80x80"/>
+                </Icon>
+                
+                <!-- Task Pane Button -->
+                <Control xsi:type="Button" id="TaskpaneButton">
+                  <Label resid="TaskpaneButton.Label"/>
+                  <Supertip>
+                    <Title resid="TaskpaneButton.Label"/>
+                    <Description resid="TaskpaneButton.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>ButtonId1</TaskpaneId>
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+                
+                <!-- Quick Compare Button -->
+                <Control xsi:type="Button" id="QuickCompareButton">
+                  <Label resid="QuickCompareButton.Label"/>
+                  <Supertip>
+                    <Title resid="QuickCompareButton.Label"/>
+                    <Description resid="QuickCompareButton.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="CompareIcon.16x16"/>
+                    <bt:Image size="32" resid="CompareIcon.32x32"/>
+                    <bt:Image size="80" resid="CompareIcon.80x80"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>quickCompare</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    
+    <!-- Resources -->
+    <Resources>
+      <!-- Images -->
+      <bt:Images>
+        <bt:Image id="Icon.16x16" DefaultValue="https://your-domain.com/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://your-domain.com/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://your-domain.com/icon-80.png"/>
+        <bt:Image id="CompareIcon.16x16" DefaultValue="https://your-domain.com/compare-16.png"/>
+        <bt:Image id="CompareIcon.32x32" DefaultValue="https://your-domain.com/compare-32.png"/>
+        <bt:Image id="CompareIcon.80x80" DefaultValue="https://your-domain.com/compare-80.png"/>
+      </bt:Images>
+      
+      <!-- URLs -->
+      <bt:Urls>
+        <bt:Url id="Commands.Url" DefaultValue="https://your-domain.com/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://your-domain.com/agreement-review.html"/>
+      </bt:Urls>
+      
+      <!-- Short Strings -->
+      <bt:ShortStrings>
+        <bt:String id="Group.Label" DefaultValue="Agreement Review"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Open Review Panel"/>
+        <bt:String id="QuickCompareButton.Label" DefaultValue="Quick Compare"/>
+      </bt:ShortStrings>
+      
+      <!-- Long Strings -->
+      <bt:LongStrings>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open the Agreement Review panel to access your playbook and compare clauses"/>
+        <bt:String id="QuickCompareButton.Tooltip" DefaultValue="Quickly compare selected text with your playbook"/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
