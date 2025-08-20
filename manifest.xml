@@ -14,9 +14,9 @@
   <!-- Add-in Display Information -->
   <DisplayName DefaultValue="Agreement Review Assistant"/>
   <Description DefaultValue="Review and compare agreement clauses against your standard playbook"/>
-  <IconUrl DefaultValue="https://your-domain.com/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://your-domain.com/icon-64.png"/>
-  <SupportUrl DefaultValue="https://your-domain.com/support"/>
+  <IconUrl DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/icon-64.png"/>
+  <SupportUrl DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/support"/>
   
   <!-- Domains that will be allowed when navigating -->
   <AppDomains>
@@ -37,7 +37,7 @@
   
   <!-- Default Settings -->
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://your-domain.com/agreement-review.html"/>
+    <SourceLocation DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/agreement-review.html"/>
   </DefaultSettings>
   
   <!-- Permissions needed by the add-in -->
@@ -112,18 +112,18 @@
     <Resources>
       <!-- Images -->
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://your-domain.com/icon-16.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://your-domain.com/icon-32.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://your-domain.com/icon-80.png"/>
-        <bt:Image id="CompareIcon.16x16" DefaultValue="https://your-domain.com/compare-16.png"/>
-        <bt:Image id="CompareIcon.32x32" DefaultValue="https://your-domain.com/compare-32.png"/>
-        <bt:Image id="CompareIcon.80x80" DefaultValue="https://your-domain.com/compare-80.png"/>
+        <bt:Image id="Icon.16x16" DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/icon-80.png"/>
+        <bt:Image id="CompareIcon.16x16" DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/compare-16.png"/>
+        <bt:Image id="CompareIcon.32x32" DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/compare-32.png"/>
+        <bt:Image id="CompareIcon.80x80" DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/compare-80.png"/>
       </bt:Images>
       
       <!-- URLs -->
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://your-domain.com/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://your-domain.com/agreement-review.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://fauxrealist.github.io/word-addin-agreement-review/agreement-review.html"/>
       </bt:Urls>
       
       <!-- Short Strings -->
